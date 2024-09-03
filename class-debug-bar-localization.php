@@ -484,15 +484,25 @@ if ( ! class_exists( 'Debug_Bar_Localization' ) && class_exists( 'Debug_Bar_Pane
 				echo '-';
 				return;
 			}
-
-			$x_generator   = $GLOBALS['l10n'][ $domain ]->get_header( 'X-Generator' );
-			$revision_date = $GLOBALS['l10n'][ $domain ]->get_header( 'PO-Revision-Date' );
-
+		
+			$translations = $GLOBALS['l10n'][ $domain ];
+		
+			$x_generator = false;
+			$revision_date = false;
+		
+			if ( isset( $translations->headers['X-Generator'] ) ) {
+				$x_generator = $translations->headers['X-Generator'];
+			}
+		
+			if ( isset( $translations->headers['PO-Revision-Date'] ) ) {
+				$revision_date = $translations->headers['PO-Revision-Date'];
+			}
+		
 			if ( false === $revision_date ) {
 				echo '-';
 				return;
 			}
-
+		
 			$generator = __( 'unknown', 'debug-bar-localization' );
 			if ( ! empty( $x_generator ) && is_string( $x_generator ) ) {
 				if ( false !== strpos( $x_generator, 'GlotPress' ) ) {
@@ -503,12 +513,12 @@ if ( ! class_exists( 'Debug_Bar_Localization' ) && class_exists( 'Debug_Bar_Pane
 					$generator = $x_generator;
 				}
 			}
-
+		
 			echo wp_kses_post( sprintf(
 				/* translators: 1: date, 2: translation program name. */
-				__( '%1$s via %2$s', 'debug-bar-localization' ),
+				__( '%s via %s', 'debug-bar-localization' ),
 				substr( $revision_date, 0, 10 ),
-				'<em>' . esc_html( $generator ) . '</em>'
+				'<em>' . $generator . '</em>'
 			) );
 		}
 
